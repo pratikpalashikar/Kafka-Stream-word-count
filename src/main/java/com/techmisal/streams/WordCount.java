@@ -9,6 +9,7 @@ import org.apache.kafka.streams.kstream.KTable;
 
 import java.util.Properties;
 
+
 public class WordCount {
 
 
@@ -28,10 +29,20 @@ public class WordCount {
         KStream<String,String> stream = kStreamBuilder.stream("word_count");
 
 
-        KTable<String,Long> kTable = stream.selectKey((key,val)->val).groupByKey().count();
+        KTable<String,Long> kTable = stream.groupByKey().count();
 
+
+
+
+        kTable.foreach((key,value)->{
+            System.out.println("Key "+key+"Value "+value);
+        });
 
         kTable.to(Serdes.String(),Serdes.Long(),"output-topic");
+
+
+
+
 
 
         KafkaStreams kafkaStreams = new KafkaStreams(kStreamBuilder,config);
